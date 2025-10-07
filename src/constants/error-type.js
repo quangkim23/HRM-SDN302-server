@@ -1,0 +1,43 @@
+class ErrorTypes {
+    static abc = "123";
+    static emailExist = "EmailExist"
+    static usernameExist = "usernameExist"
+    static missingInput = "missing Input"
+    static EmailOrPasswordIsInCorrect = "EmailOrPasswordIsInCorrect"
+    static RequireAuthentication = "RequireAuthentication"
+    static InvalidToken = "InvalidToken"
+    static EmailIsInCorrect = "EmailIsInCorrect"
+    static MissingInputSendMail = "MissingInputSendMail"
+    static EmailIsInCorrectOrExpiredToken = "Email Is InCorrect Or Expired Token"
+    static PasswordAndConfirmPasswordMustBeTheSame = "PasswordAndConfirmPasswordMustBeTheSame"
+    static RoleIsNotExist = "RoleIsNotExist"
+    static RoleNameExist = "RoleNameExist"
+    static DepartmentNameExist = "DepartmentNameExist"
+    static ManagerIdNotExist = "ManagerIdNotExist"
+    static EmployeeIdNotExist = "EmployeeIdNotExist"
+    static StaffReallyJoinedAnotherDepartment = "StaffReallyJoinedAnotherDepartment"
+    static DepartmentNotExist = "DepartmentNotExist"
+    static TitleIsDuplicate = "TitleIsDuplicate"
+    static ManagerIsRequireInEmployees = "ManagerIsRequireInEmployees"
+    static SystemError = "SystemError"
+    static DepartmentHasBeenUsed = "DepartmentHasBeenUsed"
+    static PositionHasBeenUsed = "PositionHasBeenUsed"
+    static EmployeeHasJoinedDepartment = "EmployeeHasJoinedDepartment"
+    static EmployeeIsNotExist = "EmployeeIsNotExist"
+    static EmailExist = "EmailExist"
+    static PhoneNumberExist = "PhoneNumberExist"
+    static PositionNotExist = "PositionNotExist"
+    static PhoneNumberHasBeenUsed = "PhoneNumberHasBeenUsed"
+    static YouHasCheckIn = "YouHasCheckIn"
+    static YouAreNotAllowedToAttendThisDay = "YouAreNotAllowedToAttendThisDay"
+    static TimeIsNotAllowedToCheckIn = "TimeIsNotAllowedToCheckIn"
+    static YouHaveNotCheckedPleaseCheckIn = "YouHaveNotCheckedPleaseCheckIn"
+    static StartDateInvalid = "StartDateInvalid"
+    static TheTimeYouChooseIsNotValid = "TheTimeYouChooseIsNotValid"
+    static LeaveIsNotExist = "LeaveIsNotExist"
+    static LeaveIsNotPending = "LeaveIsNotPending"
+}
+
+Object.freeze(ErrorTypes);
+
+module.exports = ErrorTypes;
