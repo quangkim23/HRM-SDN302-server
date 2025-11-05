@@ -56,8 +56,8 @@ class SalaryService {
     if(isPreliminary) query.isPreliminary = isPreliminary;
 
     const totalDocuments = await Salary.countDocuments(query);
-    
     const salaries = await Salary.find(query)
+
       .populate("employee", "fullName employeeCode image position department")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
