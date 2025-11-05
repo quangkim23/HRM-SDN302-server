@@ -224,7 +224,82 @@ class OvertimeRequestService {
     return updatedRequest;
   }
 
-  
+  static async processOvertimeRequest(req) {
+    const { id } = req.params;
+    const { status, approvedHours, rejectionReason } = req.body;
+    const approverId = req.user.employeeId;
+
+    const overtimeRequest = await overtimeRequestModel.findById(id);
+
+    if (!overtimeRequest) {
+      throw new CustomError(
+        ErrorTypes.OverTimeRequestNotFound,
+        ErrorMessages.OverTimeRequestNotFound
+      );
+    }
+
+    if (overtimeRequest.status !== "pending") {
+      throw new CustomError(
+        ErrorTypes.OvertimeRequestIsNotPending,
+        ErrorMessages.OvertimeRequestIsNotPending
+      );
+    }
+
+    const updateData = {
+      status,
+      approvedBy: approverId,
+    };
+
+    if (status === "approved") {
+      updateData.approvedHours =
+        approvedHours || overtimeRequest.requestedHours;
+
+      const attendanceDate = new Date(overtimeRequest.date);
+      attendanceDate.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(attendanceDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      await attendanceModel.findOneAndUpdate(
+        {
+          employee: overtimeRequest.employee,
+          date: {
+            $gte: attendanceDate,
+            $lte: endOfDay,
+          },
+        },
+        {
+          $set: {
+            overtimeHours: updateData.approvedHours,
+            overtimeRequest: overtimeRequest._id,
+          },
+        }
+      );
+    } else if (status === "rejected") {
+      if (!rejectionReason) {
+        throw new CustomError(
+          ErrorTypes.MissingRejectionReason,
+          ErrorMessages.MissingRejectionReason
+        );
+      }
+      updateData.rejectionReason = rejectionReason;
+    }
+
+    const updatedRequest = await overtimeRequestModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .populate({
+        path: "employee",
+        select: "fullName employeeCode email image",
+        populate: [
+          { path: "department", select: "name" },
+          { path: "position", select: "title" },
+        ],
+      })
+      .populate("approvedBy", "fullName employeeCode email image");
+
+    return updatedRequest;
+  }
+
   static async deleteOvertimeRequest(req) {
     const { id } = req.params;
 
