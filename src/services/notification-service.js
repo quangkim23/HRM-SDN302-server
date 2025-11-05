@@ -334,7 +334,67 @@ class NotificationService {
   /**
    * Admin: Cập nhật thông báo
    */
-  
+  static async updateNotification(req) {
+    const { notificationId } = req.params;
+    const { title, content, targetType, targetDepartment, targetEmployees, isImportant, status } = req.body;
+    
+    const notification = await notificationModel.findById(notificationId);
+    if (!notification) {
+      throw new CustomError(
+        ErrorTypes.DataNotFound, 
+        "Notification not found",
+        404
+      );
+    }
+
+    // Cập nhật thông tin
+    if (title) notification.title = title;
+    if (content) notification.content = content;
+    if (isImportant !== undefined) notification.isImportant = isImportant;
+    if (status) notification.status = status;
+    
+    // Cập nhật target nếu có thay đổi
+    if (targetType) {
+      notification.targetType = targetType;
+      
+      // Reset target values
+      notification.targetDepartment = undefined;
+      notification.targetEmployees = [];
+      
+      // Set target values based on new target type
+      if (targetType === 'department' && targetDepartment) {
+        const department = await departmentModel.findById(targetDepartment);
+        if (!department) {
+          throw new CustomError(
+            ErrorTypes.DataNotFound, 
+            "Department not found",
+            404
+          );
+        }
+        
+        notification.targetDepartment = targetDepartment;
+      }
+      
+      if (targetType === 'employee' && targetEmployees && targetEmployees.length > 0) {
+        const employees = await employeeModel.find({
+          _id: { $in: targetEmployees }
+        });
+        
+        if (employees.length !== targetEmployees.length) {
+          throw new CustomError(
+            ErrorTypes.DataNotFound, 
+            "One or more employees not found",
+            404
+          );
+        }
+        
+        notification.targetEmployees = targetEmployees;
+      }
+    }
+
+    await notification.save();
+    return notification;
+  }
 
   /**
    * Admin: Xóa thông báo
